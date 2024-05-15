@@ -3,6 +3,10 @@ import { Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import Rating from './Rating'
 function Product({ product }) {
+    if (!product) {
+        return null; // Or you can return a loading indicator or some other fallback UI
+      }
+    
   return (
     <Card className='my-3 p-3 rounded'>
         <Link to={`/product/${product.id}`} >
