@@ -51,7 +51,6 @@ export const fetchDetailProduct = createAsyncThunk(
     async (productId) => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/products/${productId}`);
-        console.log('fetchDetailProduct:',response.data)
         return response.data;
       } catch (error) {
         throw error;

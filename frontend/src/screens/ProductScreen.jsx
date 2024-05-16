@@ -18,6 +18,7 @@ function ProductScreen() {
     const product = useSelector((state) => state.detail.detail);
     const loading = useSelector((state) => state.products.loading);
     const error = useSelector((state) => state.products.error);
+    console.log('product screen dispatched data from state. product:', product, 'loading:', loading, 'error:', error)
 
    
     useEffect(() => {

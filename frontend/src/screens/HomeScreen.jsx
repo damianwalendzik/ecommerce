@@ -12,7 +12,7 @@ function HomeScreen() {
   const products = useSelector((state) => state.products.products);
   const loading = useSelector((state) => state.products.loading);
   const error = useSelector((state) => state.products.error);
-  console.log(products)
+  console.log('home screen dispatched data from the state. products:', products, 'loading:', loading, 'error:', error)
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
