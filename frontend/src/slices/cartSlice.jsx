@@ -41,7 +41,12 @@ export const removeFromCart = createAsyncThunk(
 const cartSlice = createSlice({
   name: 'cartitems',
   initialState,
-  reducers: {},
+  reducers: {
+    clearCart: (state) => {
+      state.cartItems = []
+      localStorage.removeItem('cartItems')
+  }
+  },
   extraReducers: (builder) => {
       builder.addCase(addToCart.pending, (state) => {
           state.loading = true
@@ -49,12 +54,12 @@ const cartSlice = createSlice({
 
       }).addCase(addToCart.fulfilled, (state, action) => {
           state.loading = false
-          const newItem = action.payload;
+          const newItem = action.payload
           const existItemIndex = state.cartItems.findIndex(x => x.product === newItem.product);
           if (existItemIndex !== -1) {
             state.cartItems[existItemIndex].quantity = newItem.quantity;
           } else {
-            state.cartItems.push(newItem);
+            state.cartItems.push(newItem)
           }
           localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
 
@@ -62,22 +67,23 @@ const cartSlice = createSlice({
           state.loading = false
           state.error = action.error.message
       }).addCase(removeFromCart.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading = true
+        state.error = null
       })
       .addCase(removeFromCart.fulfilled, (state, action) => {
-          state.loading = false;
+          state.loading = false
           const removedItemId = action.payload;
           state.cartItems = state.cartItems.filter(item => item.product !== removedItemId);
           localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
         })
       .addCase(removeFromCart.rejected, (state, action) => {
-          state.loading = false;
+          state.loading = false
           state.error = action.error.message;
       });
   }
 
 });
+export const { clearCart } = cartSlice.actions
 export const cartSliceActions = cartSlice.actions;
 export const cartSliceReducer = cartSlice.reducer;
 

@@ -3,20 +3,23 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Form, Button, } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
 import FormComponent from '../components/FormComponent'
+import {setShippingAddress} from '../slices/shippingSlice'
+
 
 function ShippingScreen() {
     const [address, setAddress] = useState('')
     const [city, setCity] = useState('')
     const [postalCode, setPostalCode] = useState('')
     const [country, setCountry] = useState('')
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const submitHandler = (e) => {
         e.preventDefault()
-        console.log(e)
-        console.log("SUBMITTED")
+        const shippingData = { address, city, postalCode, country }
+        dispatch(setShippingAddress(shippingData))
+        navigate('/checkout')
     }
   return (
     <FormComponent>

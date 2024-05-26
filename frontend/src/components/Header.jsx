@@ -2,16 +2,22 @@ import React from 'react'
 import {Container, NavDropdown, Row} from 'react-bootstrap';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { logoutUser } from '../slices/userSlice'
 // import {Container, Row} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
+
+
+import { logoutUser } from '../slices/userSlice'
+import { clearShippingAddress } from '../slices/shippingSlice'
+import { clearCart } from '../slices/cartSlice'
 
 function Header() {
   const dispatch = useDispatch()
   const LogoutHandler = () => {
     dispatch(logoutUser())
-    console.log(logoutUser)
+    dispatch(clearShippingAddress())
+    dispatch(clearCart())
+
   }
   const User = useSelector((state) => state.userinfo.userInfo)
   return (
