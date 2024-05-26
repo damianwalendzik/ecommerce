@@ -3,8 +3,7 @@ import axios from 'axios';
 
 const initialState = {
     shippingAddress: JSON.parse(localStorage.getItem('shippingAddress')) || [],
-    loading: false,
-    error: null,
+    paymentMethod: JSON.parse(localStorage.getItem('paymentMethod')) || []
 }
 
 const shippingSlice = createSlice({
@@ -18,10 +17,15 @@ const shippingSlice = createSlice({
         clearShippingAddress: (state) => {
             state.shippingAddress = []
             localStorage.removeItem('shippingAddress')
+        },
+        savePaymentMethod: (state, action) => {
+            state.paymentMethod = action.payload
+            localStorage.setItem('paymentMethod', JSON.stringify(action.payload))
+
         }
     },
     extraReducers:(builder) => {}
 })
 
-export const { setShippingAddress, clearShippingAddress } = shippingSlice.actions
+export const { setShippingAddress, clearShippingAddress, savePaymentMethod } = shippingSlice.actions
 export const shippingSliceReducer = shippingSlice.reducer

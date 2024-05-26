@@ -5,7 +5,7 @@ import { Form, Button, } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import FormComponent from '../components/FormComponent'
 import {setShippingAddress} from '../slices/shippingSlice'
-
+import CheckoutSteps from '../components/CheckoutSteps'
 
 function ShippingScreen() {
     const [address, setAddress] = useState('')
@@ -19,10 +19,11 @@ function ShippingScreen() {
         e.preventDefault()
         const shippingData = { address, city, postalCode, country }
         dispatch(setShippingAddress(shippingData))
-        navigate('/checkout')
+        navigate('/payment')
     }
   return (
     <FormComponent>
+            <CheckoutSteps step1 step2/>
       <Form onSubmit={submitHandler}>
         <h1>Shipping</h1>
         <Form.Group controlId='address'>
