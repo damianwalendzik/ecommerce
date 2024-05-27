@@ -7,16 +7,43 @@ import FormComponent from '../components/FormComponent'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { savePaymentMethod } from '../slices/shippingSlice'
 import Message from '../components/Message'
+import { PlaceOrder } from '../slices/orderSlice'
 
 
 function PlaceOrderScreen() {
+    const dispatch = useDispatch()
     const cart = useSelector((state) => state.cartitems.cartItems)
     const shippingAddress = useSelector((state) => state.shipping.shippingAddress)
     const paymentMethod = useSelector((state) => state.shipping.paymentMethod)
 
+    const ItemsPrice = parseFloat(cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2))
+    const ShippingPrice =  parseFloat((ItemsPrice > 100 ? 10 : 0).toFixed(2))
+    const TaxPrice = parseFloat((ItemsPrice * 0.23).toFixed(2))
+    const TotalPrice = (ItemsPrice + ShippingPrice + TaxPrice).toFixed(2)
+    const input = {
+                    "cart": cart, 
+                    "shippingAddress": shippingAddress, 
+                    "paymentMethod": paymentMethod,
+                    "ItemsPrice": ItemsPrice,
+                    "ShippingPrice": ShippingPrice,
+                    "TaxPrice": TaxPrice, 
+                    "TotalPrice": TotalPrice
+                }
+    const placeOrder = () => {
+        console.log("placeorder")
+        dispatch(CreateOrder(input))
+    }
+    console.log("cart", cart)
+    console.log("shippingAddress", shippingAddress)
+    console.log("paymentMethod", paymentMethod)
+    console.log("ItemsPrice", ItemsPrice)
+    console.log("TaxPrice", TaxPrice)
+    console.log("TotalPrice", TotalPrice)
+
   return (
     <div>
       <CheckoutSteps step1 step2 step3 step4 />
+      <Row>
       <Col md={8}>
         <ListGroup variant='flush'>
             <ListGroup.Item>
@@ -43,7 +70,7 @@ function PlaceOrderScreen() {
                 <h2>
                     Order Items
                 </h2>
-                <p>
+                <div>
                     <strong>Order Items: </strong>
                     {cart.length === 0 ? 
                     <Message>
@@ -54,7 +81,7 @@ function PlaceOrderScreen() {
                             {cart.map((item, index) => (
                                 <ListGroup.Item key={index}>
                                     <Row>
-                                        <Col md={2}>
+                                        <Col >
                                             <Image  src={item.image} 
                                                     alt={item.name} 
                                                     fluid 
@@ -65,7 +92,7 @@ function PlaceOrderScreen() {
                                         <Col>
                                             <Link to={`/product/${item.product}`}>{item.name}</Link>
                                         </Col>
-                                        <Col md={4}>
+                                        <Col >
                                             {item.quantity} X {item.price}&euro; = {(item.quantity * item.price).toFixed(2)}&euro;
                                         </Col>
                                     </Row>
@@ -73,7 +100,7 @@ function PlaceOrderScreen() {
                             ))}
                         </ListGroup>
                     )}
-                </p>
+                </div>
             </ListGroup.Item>
 
         </ListGroup>
@@ -92,14 +119,57 @@ function PlaceOrderScreen() {
                         Item: 
                         </Col>
                         <Col>
-                            ooooo
+                            {ItemsPrice}&euro;
                         </Col>
                     </Row>
                 </ListGroup.Item>
 
+                <ListGroup.Item>
+                    <Row>
+                        <Col>
+                        Shipping: 
+                        </Col>
+                        <Col>
+                            {ShippingPrice}&euro;
+                        </Col>
+                    </Row>
+                </ListGroup.Item>
+
+                <ListGroup.Item>
+                    <Row>
+                        <Col>
+                        Tax: 
+                        </Col>
+                        <Col>
+                            {TaxPrice}&euro;
+                        </Col>
+                    </Row>
+                </ListGroup.Item>
+
+                <ListGroup.Item>
+                    <Row>
+                        <Col>
+                        Total: 
+                        </Col>
+                        <Col>
+                            {TotalPrice}&euro;
+                        </Col>
+                    </Row>
+                </ListGroup.Item>
+
+                <ListGroup.Item>
+                    <Button type='button' 
+                            className='btn-block' 
+                            disabled={cart.length === 0} 
+                            variant='primary'
+                            onClick={placeOrder}>
+                        Place Order
+                    </Button>
+                </ListGroup.Item>
             </ListGroup>
         </Card>
       </Col>
+      </Row>
     </div>
   )
 }
