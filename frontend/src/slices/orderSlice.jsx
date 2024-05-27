@@ -15,7 +15,7 @@ const initialState = {
     TotalPrice: 0,
 };
 
-export const PlaceOrder = createAsyncThunk(
+export const CreateOrder = createAsyncThunk(
     'order/PlaceOrder',
     async ({ input }, { rejectWithValue }) => {
         try {
@@ -40,20 +40,20 @@ export const PlaceOrder = createAsyncThunk(
 
 
 
-const productsSlice = createSlice({
-  name: 'products',
+const orderSlice = createSlice({
+  name: 'order',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(PlaceOrder.pending, (state) => {
+      .addCase(CreateOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(PlaceOrder.fulfilled, (state, action) => {
+      .addCase(CreateOrder.fulfilled, (state, action) => {
         state.loading = false;
       })
-      .addCase(PlaceOrder.rejected, (state, action) => {
+      .addCase(CreateOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
@@ -62,5 +62,5 @@ const productsSlice = createSlice({
 
 
 
-export const productsActions = productsSlice.actions;
-export const productsReducer = productsSlice.reducer;
+export const orderActions = orderSlice.actions;
+export const orderReducer = orderSlice.reducer;

@@ -7,7 +7,7 @@ import FormComponent from '../components/FormComponent'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { savePaymentMethod } from '../slices/shippingSlice'
 import Message from '../components/Message'
-import { PlaceOrder } from '../slices/orderSlice'
+import { CreateOrder } from '../slices/orderSlice'
 
 
 function PlaceOrderScreen() {
@@ -29,9 +29,10 @@ function PlaceOrderScreen() {
                     "TaxPrice": TaxPrice, 
                     "TotalPrice": TotalPrice
                 }
+    console.log(input)
     const placeOrder = () => {
         console.log("placeorder")
-        dispatch(CreateOrder(input))
+        dispatch(CreateOrder({input}))
     }
     console.log("cart", cart)
     console.log("shippingAddress", shippingAddress)
