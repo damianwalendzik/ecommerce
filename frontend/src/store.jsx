@@ -16,6 +16,8 @@ const store = configureStore({
     shipping: shippingSliceReducer,
     order: orderReducer,
   },
+  devTools: process.env.NODE_ENV !== 'production',
+
 });
 
 export { store };

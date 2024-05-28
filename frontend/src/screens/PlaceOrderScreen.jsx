@@ -3,23 +3,27 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button, Col, Row, ListGroup, Image, Card } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
-import FormComponent from '../components/FormComponent'
 import CheckoutSteps from '../components/CheckoutSteps'
-import { savePaymentMethod } from '../slices/shippingSlice'
 import Message from '../components/Message'
-import { CreateOrder } from '../slices/orderSlice'
-
+import { CreateOrder, clearOrder } from '../slices/orderSlice'
+import { clearShippingAddress } from '../slices/shippingSlice'
 
 function PlaceOrderScreen() {
     const dispatch = useDispatch()
     const cart = useSelector((state) => state.cartitems.cartItems)
     const shippingAddress = useSelector((state) => state.shipping.shippingAddress)
     const paymentMethod = useSelector((state) => state.shipping.paymentMethod)
+    const orderState = useSelector((state) => state.order);
+    const navigate = useNavigate()
+
+    const { orderID, loading, error } = orderState;
+    console.log("ORDERID: ", orderID)
 
     const ItemsPrice = parseFloat(cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2))
     const ShippingPrice =  parseFloat((ItemsPrice > 100 ? 10 : 0).toFixed(2))
     const TaxPrice = parseFloat((ItemsPrice * 0.23).toFixed(2))
     const TotalPrice = (ItemsPrice + ShippingPrice + TaxPrice).toFixed(2)
+    console.log(orderState)
     const input = {
                     "cart": cart, 
                     "shippingAddress": shippingAddress, 
@@ -29,17 +33,20 @@ function PlaceOrderScreen() {
                     "TaxPrice": TaxPrice, 
                     "TotalPrice": TotalPrice
                 }
-    console.log(input)
+
+    useEffect(() => {
+        if (orderID) {
+            console.log("ORDERID: ", orderID)
+            navigate(`/order/${orderID}`);
+            }
+        }, [orderID, navigate]);
+
     const placeOrder = () => {
         console.log("placeorder")
         dispatch(CreateOrder({input}))
+        // dispatch(clearOrder())
+        // dispatch(clearShippingAddress())
     }
-    console.log("cart", cart)
-    console.log("shippingAddress", shippingAddress)
-    console.log("paymentMethod", paymentMethod)
-    console.log("ItemsPrice", ItemsPrice)
-    console.log("TaxPrice", TaxPrice)
-    console.log("TotalPrice", TotalPrice)
 
   return (
     <div>
