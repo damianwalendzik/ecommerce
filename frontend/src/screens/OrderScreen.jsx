@@ -1,51 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Col, Row, ListGroup, Image, Card } from 'react-bootstrap';
+import { Col, Row, ListGroup, Image, Card, ListGroupItem } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
+import PayPal from '../components/PayPal';
 
 import { getOrderDetail } from '../slices/orderSlice';
-
 function OrderScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-const orderDetail = useSelector((state) => state.order.orderDetail);
-console.log("ORDER DETAIL",orderDetail)
+  const orderDetail = useSelector((state) => state.order.orderDetail);
+  const loading = useSelector((state) => state.order.loading);
+  const error = useSelector((state) => state.order.error);
 
-
-useEffect(() => {
+  useEffect(() => {
     console.log('ID from useParams:', id);
-    if (id && !orderDetail || orderDetail.id !== Number(id)) {
+    if (id && (!orderDetail || orderDetail.id !== Number(id))) {
       dispatch(getOrderDetail({ id }));
     }
   }, [dispatch, id, orderDetail]);
 
-//   if (loading) return <Loader />;
-//   if (error) return <Message variant="danger">{error}</Message>;
+  if (loading) return <Loader />;
+  if (error) return <Message variant="danger">{error}</Message>;
+  if (!orderDetail) return null;
 
-//   if (!orderDetail) return null;
-
-  // Calculate prices
-//   const itemsPrice = parseFloat(orderDetail.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0).toFixed(2));
-//   const shippingPrice = parseFloat(orderDetail.shippingPrice);
-//   const taxPrice = parseFloat(orderDetail.taxPrice);
-//   const totalPrice = parseFloat(orderDetail.totalPrice);
-
+// PAYPAL CLIENT ID: AXQRaIK134MElmi4JFydESD3i4qQNrZsfzNHCBsUHVj9_SRYJIbhxF3NMhiM7qNxOlV83qJ0XzonKiAx
   return (
     <div>
-
-      <h1>Order {orderDetail.orderID}</h1>
+      <h1>Order {orderDetail.id}</h1>
       <Row>
         <Col md={8}>
           <ListGroup variant='flush'>
             <ListGroup.Item>
               <h2>Shipping</h2>
+              <p><strong>Name:</strong>{orderDetail.user?.name}</p>
+              <p><strong>Email:</strong><a href={`mailto:${orderDetail.user?.email}`}>{orderDetail.user?.email}</a></p>
               <p>
                 <strong>Shipping: </strong>
-                {orderDetail.shippingAddress.address}, {orderDetail.shippingAddress.city}, {orderDetail.shippingAddress.postalCode}, {orderDetail.shippingAddress.country}
+                {orderDetail.shippingAddress?.address}, {orderDetail.shippingAddress?.city}, {orderDetail.shippingAddress?.postalCode}, {orderDetail.shippingAddress?.country}
               </p>
+                {/* {orderDetail.isDelivered ? (
+                <Message variant='success'>Delivered on: {orderDetail.DeliveredAt}</Message>
+              ) : (
+                <Message variant='danger'>Not delivered</Message>
+              )} */}
             </ListGroup.Item>
 
             <ListGroup.Item>
@@ -54,15 +54,20 @@ useEffect(() => {
                 <strong>Payment Method: </strong>
                 {orderDetail.paymentMethod}
               </p>
+              {/* {orderDetail.isPaid ? (
+                <Message variant='success'>Paid on: {orderDetail.paidAt}</Message>
+              ) : (
+                <Message variant='danger'>Not paid</Message>
+              )} */}
             </ListGroup.Item>
 
             <ListGroup.Item>
               <h2>Order Items</h2>
-              {orderDetail.orderItems.length === 0 ? (
+              {orderDetail.orderItems?.length === 0 ? (
                 <Message>Your order is empty.</Message>
               ) : (
                 <ListGroup variant='flush'>
-                  {orderDetail.orderItems.map((item, index) => (
+                  {orderDetail.orderItems?.map((item, index) => (
                     <ListGroup.Item key={index}>
                       <Row>
                         <Col>
@@ -72,7 +77,7 @@ useEffect(() => {
                           <Link to={`/product/${item.product}`}>{item.name}</Link>
                         </Col>
                         <Col>
-                          {item.qty} X {item.price}&euro; = {(item.qty * item.price).toFixed(2)}&euro;
+                          {item.qty} x {item.price}€ = {(item.qty * item.price).toFixed(2)}€
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -91,30 +96,33 @@ useEffect(() => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items:</Col>
-                  <Col>{orderDetail.itemsPrice}&euro;</Col>
+                  <Col>{orderDetail.itemsPrice}€</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Shipping:</Col>
-                  <Col>{orderDetail.shippingPrice}&euro;</Col>
+                  <Col>{orderDetail.shippingPrice}€</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Tax:</Col>
-                  <Col>{orderDetail.taxPrice}&euro;</Col>
+                  <Col>{orderDetail.taxPrice}€</Col>
                 </Row>
               </ListGroup.Item>
 
               <ListGroup.Item>
                 <Row>
                   <Col>Total:</Col>
-                  <Col>{orderDetail.totalPrice}&euro;</Col>
+                  <Col>{orderDetail.totalPrice}€</Col>
                 </Row>
               </ListGroup.Item>
+              <ListGroupItem>
+                <PayPal />
+              </ListGroupItem>
             </ListGroup>
           </Card>
         </Col>
@@ -124,4 +132,3 @@ useEffect(() => {
 }
 
 export default OrderScreen;
-

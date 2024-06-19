@@ -60,6 +60,24 @@ export const getOrderDetail = createAsyncThunk(
   }
 );
 
+export const orderPayment = createAsyncThunk(
+  'order/orderPayment',
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).token : null;
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }}
+      const { data } = await axios.put(`http://127.0.0.1:8000/api/orders/${id}/pay`, config);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message)
+    }
+  }
+)
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -95,7 +113,19 @@ const orderSlice = createSlice({
       .addCase(getOrderDetail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      .addCase(orderPayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(orderPayment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orderDetail = action.payload;
+      })
+      .addCase(orderPayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 
